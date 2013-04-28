@@ -12,3 +12,6 @@ test:
 
 dependencies:
 	@env GOPATH=$(GOPATH) go get github.com/howeyc/fsnotify
+
+edit:
+	@env GOPATH=$(GOPATH) vim .
