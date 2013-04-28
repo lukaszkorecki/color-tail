@@ -1,2 +1,7 @@
 pkg
 src/github.com
+pkg/darwin_amd64/github.com/howeyc/fsnotify.a
+src/ctail/ctail
+src/ctail/lol.txt
+src/ctail/ok.txt
+src/github.com/howeyc/fsnotify/

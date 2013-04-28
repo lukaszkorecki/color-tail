@@ -7,18 +7,18 @@ import (
 	"os"
   "io/ioutil"
 	"path/filepath"
+  "message"
 )
 
-func fileNotification(fname string) string {
-	s := fmt.Sprintf("Modified! %v", fname)
+func fileNotification(fname string) message.Message {
   contents, _ := ioutil.ReadFile(fname)
-  log.Printf(fmt.Sprintf("%v", contents))
-	return s
+	s := fmt.Sprintf("Modified! %v", contents)
+	return message.Message{fname, s}
 }
 
-func monitorPath(fname string, notify chan string) {
+func monitorPath(fname string, notify chan message.Message) {
 	watcher, _ := fsnotify.NewWatcher()
-	notify <- "Watching " + fname + "!"
+  notify <- message.Message{ fname, "Start!"}
 
 	go func() {
 		for {
@@ -27,7 +27,7 @@ func monitorPath(fname string, notify chan string) {
 				log.Printf(event.Name)
         notify <- fileNotification(event.Name)
 			case err := <-watcher.Error:
-				notify <- fmt.Sprintf("%v", err)
+        notify <- message.Message{fname, fmt.Sprintf("Error: %v", err)}
         watcher.Close()
 			}
 		}
@@ -36,8 +36,9 @@ func monitorPath(fname string, notify chan string) {
 	watcher.Watch(fname)
 }
 
+
 func main() {
-	out := make(chan string)
+	out := make(chan message.Message)
 	if len(os.Args) == 1 {
 		log.Fatal("Needs files!")
 		os.Exit(1)
@@ -51,6 +52,6 @@ func main() {
 
 	for {
 		message := <-out
-		log.Println(message)
+    message.Print()
 	}
 }
