@@ -2,11 +2,11 @@ package main
 
 import (
 	"ctail/message"
-	"fmt"
 	"github.com/howeyc/fsnotify"
-	"io/ioutil"
+	"fmt"
 	"log"
 	"os"
+  "bytes"
 	"path/filepath"
 )
 
@@ -20,10 +20,33 @@ var Registry = make(map[string]int)
 
 func fileNotification(fname string) message.Message {
 	lastPosition := Registry[fname]
-	Registry[fname] = lastPosition + 50
-	contents, _ := ioutil.ReadFile(fname)
-	return message.Message{fname, string(contents)}
+  // log.Printf("lastPosition: %v", lastPosition)
+
+  // uhhhh...
+  if lastPosition == 0 {
+    lastPosition = lastPosition + 512
+  }
+
+  Registry[fname] = lastPosition
+  file, err := os.Open(fname)
+  if err != nil {
+    return message.Message{fname, "Can't open file!"}
+  }
+
+  buf := bytes.NewBuffer(make ([]byte, lastPosition))
+
+  _ , err = buf.ReadFrom(file)
+  if err != nil {
+    log.Printf("so yeah %v", err)
+  }
+
+  // info, _ := file.Stat()
+  // log.Printf("size: %v", info.Size())
+  // log.Printf("contents: %v, err: %v, buf: %v", contents, err, buf.String())
+  fmt.Printf("%v %v", colorize(fname), buf.String())
+	return message.Message{fname, buf.String()}
 }
+
 
 func monitorPath(fname string, notify chan message.Message) {
 	watcher, _ := fsnotify.NewWatcher()
