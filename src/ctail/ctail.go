@@ -16,8 +16,25 @@ import (
 // we need to take this blog post into account:
 // - http://blog.golang.org/2013/02/go-maps-in-action.html
 // especially the section about maps not being thread safe (which is easy to fix)
-var Registry = make(map[string]int)
+var Registry = make(map[string]int64)
 
+
+func colorize(stuff string) string {
+  colorTable := make(map[string]string)
+
+  colorTable["black"]   = "\033[30m"
+  colorTable["red"]     = "\033[31m"
+  colorTable["green"]   = "\033[32m"
+  colorTable["yellow"]  = "\033[33m"
+  colorTable["blue"]    = "\033[34m"
+  colorTable["magenta"] = "\033[35m"
+  colorTable["cyan"]    = "\033[36m"
+  colorTable["white"]   = "\033[37m"
+  colorTable["reset"]   = "\033[39m"
+
+  return colorTable["red"] + stuff + colorTable["reset"]
+
+}
 func fileNotification(fname string) message.Message {
 	lastPosition := Registry[fname]
   // log.Printf("lastPosition: %v", lastPosition)
