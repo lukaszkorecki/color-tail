@@ -36,32 +36,31 @@ func colorize(stuff string) string {
 
 }
 func fileNotification(fname string) message.Message {
-	lastPosition := Registry[fname]
-  // log.Printf("lastPosition: %v", lastPosition)
-
-  // uhhhh...
-  if lastPosition == 0 {
-    lastPosition = lastPosition + 512
-  }
-
-  Registry[fname] = lastPosition
   file, err := os.Open(fname)
+
   if err != nil {
     return message.Message{fname, "Can't open file!"}
   }
 
+	lastPosition := Registry[fname]
   buf := bytes.NewBuffer(make ([]byte, lastPosition))
 
   _ , err = buf.ReadFrom(file)
   if err != nil {
-    log.Printf("so yeah %v", err)
+    log.Printf("Reading from %v failed: %v", fname, err)
   }
 
-  // info, _ := file.Stat()
-  // log.Printf("size: %v", info.Size())
-  // log.Printf("contents: %v, err: %v, buf: %v", contents, err, buf.String())
-  fmt.Printf("%v %v", colorize(fname), buf.String())
-	return message.Message{fname, buf.String()}
+  length := int64(buf.Len())
+
+  offset :=  length - lastPosition
+
+  if offset == length { offset = 8 }
+
+  log.Printf("length: %v lastPosition: %v offset: %v",length, lastPosition, offset)
+
+  str := string(buf.Next(int(offset)))
+  Registry[fname] = length
+	return message.Message{colorize(fname), str}
 }
 
 
@@ -73,7 +72,7 @@ func monitorPath(fname string, notify chan message.Message) {
 		for {
 			select {
 			case event := <-watcher.Event:
-				log.Printf(event.Name)
+				log.Printf("<<<<< %v", event.Name)
 				notify <- fileNotification(event.Name)
 			case err := <-watcher.Error:
 				notify <- message.Message{fname, fmt.Sprintf("Error: %v", err)}
