@@ -2,7 +2,6 @@ package message
 
 import (
 	"fmt"
-	"log"
 )
 
 type Message struct {
@@ -11,5 +10,5 @@ type Message struct {
 }
 
 func (m Message) Print() {
-	log.Printf(fmt.Sprintf("%v: %v", m.Event, m.Name))
+	fmt.Printf("%v:\n%v", m.Name, m.Event)
 }
