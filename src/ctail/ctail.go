@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-  "bytes"
 	"path/filepath"
 )
 
@@ -35,31 +34,34 @@ func colorize(stuff string) string {
   return colorTable["red"] + stuff + colorTable["reset"]
 
 }
-func fileNotification(fname string) message.Message {
+func fileChanged(fname string) message.Message {
   file, err := os.Open(fname)
 
-  if err != nil {
+  // get file size
+  stat, err2 := file.Stat()
+  size := int64(stat.Size())
+
+  if err != nil || err2 != nil {
     return message.Message{fname, "Can't open file!"}
   }
 
 	lastPosition := Registry[fname]
-  buf := bytes.NewBuffer(make ([]byte, lastPosition))
+  offset := size - 8
+  if lastPosition != 0  { offset = size - lastPosition }
 
-  _ , err = buf.ReadFrom(file)
-  if err != nil {
-    log.Printf("Reading from %v failed: %v", fname, err)
+
+  buf := make ([]byte, lastPosition+8)
+
+  _ , readErr := file.ReadAt(buf, offset)
+  if readErr != nil {
+    log.Printf("!!! Reading from %v failed: %v", fname, readErr)
   }
+  file.Close()
 
-  length := int64(buf.Len())
+  log.Printf("lastPosition: %v size: %v", lastPosition, size)
 
-  offset :=  length - lastPosition
-
-  if offset == length { offset = 8 }
-
-  log.Printf("length: %v lastPosition: %v offset: %v",length, lastPosition, offset)
-
-  str := string(buf.Next(int(offset)))
-  Registry[fname] = length
+  str := string(buf)
+  Registry[fname] = int64(size)
 	return message.Message{colorize(fname), str}
 }
 
@@ -73,7 +75,7 @@ func monitorPath(fname string, notify chan message.Message) {
 			select {
 			case event := <-watcher.Event:
 				log.Printf("<<<<< %v", event.Name)
-				notify <- fileNotification(event.Name)
+				notify <- fileChanged(event.Name)
 			case err := <-watcher.Error:
 				notify <- message.Message{fname, fmt.Sprintf("Error: %v", err)}
 				watcher.Close()
