@@ -2,8 +2,8 @@ package main
 
 import (
 	"ctail/message"
-	"github.com/howeyc/fsnotify"
 	"fmt"
+	"github.com/howeyc/fsnotify"
 	"log"
 	"os"
 	"path/filepath"
@@ -17,54 +17,53 @@ import (
 // especially the section about maps not being thread safe (which is easy to fix)
 var Registry = make(map[string]int64)
 
-
 func colorize(stuff string) string {
-  colorTable := make(map[string]string)
+	colorTable := make(map[string]string)
 
-  colorTable["black"]   = "\033[30m"
-  colorTable["red"]     = "\033[31m"
-  colorTable["green"]   = "\033[32m"
-  colorTable["yellow"]  = "\033[33m"
-  colorTable["blue"]    = "\033[34m"
-  colorTable["magenta"] = "\033[35m"
-  colorTable["cyan"]    = "\033[36m"
-  colorTable["white"]   = "\033[37m"
-  colorTable["reset"]   = "\033[39m"
+	colorTable["black"] = "\033[30m"
+	colorTable["red"] = "\033[31m"
+	colorTable["green"] = "\033[32m"
+	colorTable["yellow"] = "\033[33m"
+	colorTable["blue"] = "\033[34m"
+	colorTable["magenta"] = "\033[35m"
+	colorTable["cyan"] = "\033[36m"
+	colorTable["white"] = "\033[37m"
+	colorTable["reset"] = "\033[39m"
 
-  return colorTable["red"] + stuff + colorTable["reset"]
+	return colorTable["red"] + stuff + colorTable["reset"]
 
 }
 func fileChanged(fname string) message.Message {
-  file, err := os.Open(fname)
+	file, err := os.Open(fname)
 
-  // get file size
-  stat, err2 := file.Stat()
-  size := int64(stat.Size())
+	// get file size
+	stat, err2 := file.Stat()
+	size := int64(stat.Size())
 
-  if err != nil || err2 != nil {
-    return message.Message{fname, "Can't open file!"}
-  }
+	if err != nil || err2 != nil {
+		return message.Message{fname, "Can't open file!"}
+	}
 
 	lastPosition := Registry[fname]
-  offset := size - 8
-  if lastPosition != 0  { offset = size - lastPosition }
+	offset := size - 8
+	if lastPosition != 0 {
+		offset = size - lastPosition
+	}
 
+	buf := make([]byte, lastPosition+8)
 
-  buf := make ([]byte, lastPosition+8)
+	_, readErr := file.ReadAt(buf, offset)
+	if readErr != nil {
+		log.Printf("!!! Reading from %v failed: %v", fname, readErr)
+	}
+	file.Close()
 
-  _ , readErr := file.ReadAt(buf, offset)
-  if readErr != nil {
-    log.Printf("!!! Reading from %v failed: %v", fname, readErr)
-  }
-  file.Close()
+	log.Printf("lastPosition: %v size: %v", lastPosition, size)
 
-  log.Printf("lastPosition: %v size: %v", lastPosition, size)
-
-  str := string(buf)
-  Registry[fname] = int64(size)
+	str := string(buf)
+	Registry[fname] = int64(size)
 	return message.Message{colorize(fname), str}
 }
-
 
 func monitorPath(fname string, notify chan message.Message) {
 	watcher, _ := fsnotify.NewWatcher()
