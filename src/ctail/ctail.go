@@ -2,6 +2,7 @@ package main
 
 import (
 	"ctail/message"
+	"ctail/registry"
 	"fmt"
 	"github.com/howeyc/fsnotify"
 	"log"
@@ -9,13 +10,7 @@ import (
 	"path/filepath"
 )
 
-// this map holds references to last position for given file
-// and it needs to be updated whenever a file is read...
-// XXX what about two goroutines updating this map at the same time?
-// we need to take this blog post into account:
-// - http://blog.golang.org/2013/02/go-maps-in-action.html
-// especially the section about maps not being thread safe (which is easy to fix)
-var Registry = make(map[string]int64)
+var reg = registry.New()
 
 func colorize(stuff string) string {
 	colorTable := make(map[string]string)
@@ -44,7 +39,7 @@ func fileChanged(fname string) message.Message {
 		return message.Message{fname, "Can't open file!"}
 	}
 
-	lastPosition := Registry[fname]
+	lastPosition := reg.Get(fname)
 	offset := size - 8
 	if lastPosition != 0 {
 		offset = size - lastPosition
@@ -61,7 +56,7 @@ func fileChanged(fname string) message.Message {
 	log.Printf("lastPosition: %v size: %v", lastPosition, size)
 
 	str := string(buf)
-	Registry[fname] = int64(size)
+	reg.Set(fname, int64(size))
 	return message.Message{colorize(fname), str}
 }
 
@@ -95,7 +90,7 @@ func main() {
 	for i := 1; i < len(os.Args); i++ {
 		fname, _ := filepath.Abs(os.Args[i])
 		// XXX check if file is readable?
-		Registry[fname] = 0
+		reg.Set(fname, 0)
 		go monitorPath(fname, out)
 	}
 
