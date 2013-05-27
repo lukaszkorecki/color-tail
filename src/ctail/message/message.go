@@ -10,5 +10,5 @@ type Message struct {
 }
 
 func (m Message) Print() {
-	fmt.Printf("%v:\n%v", m.Name, m.Event)
+	fmt.Printf("%v:\n%v\n", m.Name, m.Event)
 }
