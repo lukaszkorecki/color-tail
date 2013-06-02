@@ -30,6 +30,7 @@ func colorize(stuff string) string {
 }
 func fileChanged(fname string) message.Message {
 	file, err := os.Open(fname)
+	defer file.Close()
 
 	// get file size
 	stat, err2 := file.Stat()
@@ -39,25 +40,29 @@ func fileChanged(fname string) message.Message {
 		return message.Message{fname, "Can't open file!"}
 	}
 
-	lastPosition := reg.Get(fname)
-	offset := size - 8
-	if lastPosition != 0 {
-		offset = size - lastPosition
+	lastSize := reg.Get(fname)
+	offset := int64(0)
+
+	if lastSize != 0 {
+		offset = lastSize
 	}
 
-	buf := make([]byte, lastPosition+8)
+	// file got trimmed - or something reported wrong size
+	if offset >= size || offset <= 0 {
+		offset = size/2
+	}
+
+
+	log.Printf("lastSize: %v size: %v offset: %v", lastSize, size, offset)
+	buf := make([]byte, offset)
 
 	_, readErr := file.ReadAt(buf, offset)
 	if readErr != nil {
 		log.Printf("!!! Reading from %v failed: %v", fname, readErr)
 	}
-	file.Close()
 
-	log.Printf("lastPosition: %v size: %v", lastPosition, size)
-
-	str := string(buf)
 	reg.Set(fname, int64(size))
-	return message.Message{colorize(fname), str}
+	return message.Message{colorize(fname), string(buf)}
 }
 
 func monitorPath(fname string, notify chan message.Message) {
