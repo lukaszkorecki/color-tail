@@ -1,11 +1,11 @@
 GOPATH=`pwd`
 main = ctail.go
 # find all package names in src and add them to list
-test_packages=`find ./src/ -type d | sed 's/^.*src.*\///'`
+test_packages=`find -type d | egrep -v "src|.git|.pkg"`
 
+all: dependencies test build
 
-
-build: dependencies test
+build:
 	@echo Building in $(GOPATH)
 	@env GOPATH=$(GOPATH) go build -v $(main)
 
