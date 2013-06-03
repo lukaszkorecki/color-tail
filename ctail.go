@@ -7,6 +7,7 @@ import (
 	"github.com/howeyc/fsnotify"
 	"log"
 	"os"
+	"io"
 	"path/filepath"
 )
 
@@ -57,7 +58,7 @@ func fileChanged(fname string) message.Message {
 	buf := make([]byte, offset)
 
 	_, readErr := file.ReadAt(buf, offset)
-	if readErr != nil {
+	if readErr != nil && readErr != io.EOF {
 		log.Printf("!!! Reading from %v failed: %v", fname, readErr)
 	}
 
