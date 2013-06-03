@@ -27,3 +27,5 @@ _cgo_export.*
 _testmain.go
 
 *.exe
+src
+ctail

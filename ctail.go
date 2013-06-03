@@ -1,8 +1,8 @@
 package main
 
 import (
-	"ctail/message"
-	"ctail/registry"
+	"./message"
+	"./registry"
 	"fmt"
 	"github.com/howeyc/fsnotify"
 	"log"
