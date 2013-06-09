@@ -3,6 +3,7 @@ package main
 import (
 	"./message"
 	"./registry"
+	"./technicolor"
 	"fmt"
 	"github.com/howeyc/fsnotify"
 	"log"
@@ -13,22 +14,6 @@ import (
 
 var reg = registry.New()
 
-func colorize(stuff string) string {
-	colorTable := make(map[string]string)
-
-	colorTable["black"] = "\033[30m"
-	colorTable["red"] = "\033[31m"
-	colorTable["green"] = "\033[32m"
-	colorTable["yellow"] = "\033[33m"
-	colorTable["blue"] = "\033[34m"
-	colorTable["magenta"] = "\033[35m"
-	colorTable["cyan"] = "\033[36m"
-	colorTable["white"] = "\033[37m"
-	colorTable["reset"] = "\033[39m"
-
-	return colorTable["red"] + stuff + colorTable["reset"]
-
-}
 func fileChanged(fname string) message.Message {
 	file, err := os.Open(fname)
 	defer file.Close()
@@ -63,7 +48,7 @@ func fileChanged(fname string) message.Message {
 	}
 
 	reg.Set(fname, int64(size))
-	return message.Message{colorize(fname), string(buf)}
+	return message.Message{technicolor.RandPaint(fname), string(buf)}
 }
 
 func monitorPath(fname string, notify chan message.Message) {
