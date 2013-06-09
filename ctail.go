@@ -39,7 +39,6 @@ func fileChanged(fname string) message.Message {
 	}
 
 
-	log.Printf("lastSize: %v size: %v offset: %v", lastSize, size, offset)
 	buf := make([]byte, offset)
 
 	_, readErr := file.ReadAt(buf, offset)
@@ -59,7 +58,6 @@ func monitorPath(fname string, notify chan message.Message) {
 		for {
 			select {
 			case event := <-watcher.Event:
-				log.Printf("<<<<< %v", event.Name)
 				notify <- fileChanged(event.Name)
 			case err := <-watcher.Error:
 				notify <- message.Message{fname, fmt.Sprintf("Error: %v", err)}
