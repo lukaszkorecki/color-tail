@@ -6,9 +6,9 @@ import (
 	"./technicolor"
 	"fmt"
 	"github.com/howeyc/fsnotify"
+	"io"
 	"log"
 	"os"
-	"io"
 	"path/filepath"
 )
 
@@ -35,9 +35,8 @@ func fileChanged(fname string) message.Message {
 
 	// file got trimmed - or something reported wrong size
 	if offset >= size || offset <= 0 {
-		offset = size/2
+		offset = size / 2
 	}
-
 
 	buf := make([]byte, offset)
 

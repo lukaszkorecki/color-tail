@@ -1,8 +1,8 @@
 package technicolor
 
 import (
-	"testing"
 	"fmt"
+	"testing"
 )
 
 func TestRedPaint(t *testing.T) {
@@ -35,7 +35,7 @@ func TestRandPaint(t *testing.T) {
 			hasString = (sr == str)
 		}
 	}
-	if ! hasString {
+	if !hasString {
 		t.Errorf("RandPaint didn't generate valid colored string: %v", sr)
 	}
 }

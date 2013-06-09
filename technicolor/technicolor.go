@@ -6,19 +6,19 @@ import (
 
 var (
 	colorTable = map[string]string{
-		"black": "\033[30m",
-		"red": "\033[31m",
-		"green": "\033[32m",
-		"yellow": "\033[33m",
-		"blue": "\033[34m",
+		"black":   "\033[30m",
+		"red":     "\033[31m",
+		"green":   "\033[32m",
+		"yellow":  "\033[33m",
+		"blue":    "\033[34m",
 		"magenta": "\033[35m",
-		"cyan": "\033[36m",
-		"white": "\033[37m",
-		"reset": "\033[39m",
+		"cyan":    "\033[36m",
+		"white":   "\033[37m",
+		"reset":   "\033[39m",
 	}
 
-	Colors = []string{ "black" , "red", "green", "yellow", "blue", "magenta", "cyan", "white"}
-	ctLen = int32(len(Colors))
+	Colors = []string{"black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"}
+	ctLen  = int32(len(Colors))
 )
 
 // Colorizes given string with specified color
