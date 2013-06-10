@@ -26,11 +26,14 @@ var (
 func Paint(str, color string) string {
 
 	c, ok := colorTable[color]
+	s := ""
 	if !ok {
-		return RandPaint(str)
+		s = RandPaint(str)
 	} else {
-		return c + str + colorTable["reset"]
+		s = c + str + colorTable["reset"]
 	}
+
+	return s
 }
 
 // Colorizes the string with randomly picked color

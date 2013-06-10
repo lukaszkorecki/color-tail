@@ -9,9 +9,8 @@ import (
 	"io"
 	"log"
 	"os"
-	"io"
-	"runtime"
 	"path/filepath"
+	"runtime"
 )
 
 var reg = registry.New()
