@@ -32,3 +32,4 @@ ctail
 */*.test
 */*.txt
 *.txt
+tags
