@@ -51,7 +51,7 @@ func fileChanged(fname string) message.Message {
 
 func monitorPath(fname string, notify chan message.Message) {
 	watcher, _ := fsnotify.NewWatcher()
-	notify <- message.Message{fname, "Start!"}
+	notify <- message.Message{fname, fmt.Sprintf("Start! %v", fname)}
 
 	go func() {
 		for {
