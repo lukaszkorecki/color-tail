@@ -3,7 +3,6 @@ package main
 import (
 	"./message"
 	"./registry"
-	"./technicolor"
 	"fmt"
 	"github.com/howeyc/fsnotify"
 	"io"
@@ -47,7 +46,7 @@ func fileChanged(fname string) message.Message {
 	}
 
 	reg.Set(fname, int64(size))
-	return message.Message{technicolor.RandPaint(fname), string(buf)}
+	return message.Message{fname, string(buf)}
 }
 
 func monitorPath(fname string, notify chan message.Message) {
