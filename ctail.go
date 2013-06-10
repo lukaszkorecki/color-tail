@@ -9,6 +9,8 @@ import (
 	"io"
 	"log"
 	"os"
+	"io"
+	"runtime"
 	"path/filepath"
 )
 
@@ -69,6 +71,8 @@ func monitorPath(fname string, notify chan message.Message) {
 }
 
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	out := make(chan message.Message)
 	if len(os.Args) == 1 {
 		log.Fatal("Needs files!")
