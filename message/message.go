@@ -2,11 +2,11 @@ package message
 
 import (
 	"../technicolor"
+	"../registry"
 	"fmt"
 	"strings"
 	"io"
 	"crypto/md5"
-	"sync"
 )
 
 type Message struct {
@@ -14,26 +14,9 @@ type Message struct {
 	Event string
 }
 
-type nameHashMap struct {
-	lock sync.RWMutex
-	store map[string]string
-}
-func (n *nameHashMap) Get(key string) (string, bool) {
-	n.lock.RLock()
-	defer n.lock.RUnlock()
-	v, ok := n.store[key]
-	return v, ok
-}
-func (n *nameHashMap) Set(key, val string) string {
-	n.lock.Lock()
-	defer n.lock.Unlock()
-	n.store[key] = val
-	return val
-}
-
 var (
 	h = md5.New()
-	nameMap = &nameHashMap{store: make(map[string]string)}
+	nameMap = registry.New()
 )
 
 
@@ -47,7 +30,9 @@ func hashName(name string) (string, string){
 		nameMap.Set(name, v)
 		hash = v
 	}
-	return hash, technicolor.RandColorName()
+	// force string casting of AnyType
+	r := fmt.Sprintf("%v", hash)
+	return r, technicolor.RandColorName()
 }
 
 
