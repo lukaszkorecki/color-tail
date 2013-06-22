@@ -26,11 +26,12 @@ func fileChanged(fname string) message.Message {
 		return message.Message{fname, "Can't open file!"}
 	}
 
-	lastSize := reg.Get(fname)
+	lastSize, isSet := reg.Get(fname)
 	offset := int64(0)
 
-	if lastSize != 0 {
-		offset = lastSize
+	if isSet {
+		// we know that if it's set, it's int
+		offset, _  = lastSize.(int64)
 	}
 
 	// file got trimmed - or something reported wrong size

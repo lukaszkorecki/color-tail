@@ -31,7 +31,7 @@ func hashName(name string) (string, string){
 		hash = v
 	}
 	// force string casting of AnyType
-	r := fmt.Sprintf("%v", hash)
+	r, _  := hash.(string)
 	return r, technicolor.RandColorName()
 }
 
