@@ -12,6 +12,6 @@ func TestReadAndWrite(t *testing.T) {
 
 	c := reg.Get("foo")
 	if c != 1 {
-		t.Errorf("expceted %v!", c)
+		t.Errorf("Expected %v!", c)
 	}
 }

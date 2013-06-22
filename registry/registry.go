@@ -13,7 +13,10 @@ type Registry struct {
 func (r *Registry) Get(key string) int64 {
 	r.lock.RLock()
 	defer r.lock.RUnlock()
-	val := r.store[key]
+	val, ok := r.store[key]
+	if ! ok {
+		val = -1 // FIXME
+	}
 	return val
 }
 

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"io"
 	"crypto/md5"
+	"sync"
 )
 
 type Message struct {
@@ -13,12 +14,40 @@ type Message struct {
 	Event string
 }
 
-var h = md5.New()
+type nameHashMap struct {
+	lock sync.RWMutex
+	store map[string]string
+}
+func (n *nameHashMap) Get(key string) (string, bool) {
+	n.lock.RLock()
+	defer n.lock.RUnlock()
+	v, ok := n.store[key]
+	return v, ok
+}
+func (n *nameHashMap) Set(key, val string) string {
+	n.lock.Lock()
+	defer n.lock.Unlock()
+	n.store[key] = val
+	return val
+}
 
+var (
+	h = md5.New()
+	nameMap = &nameHashMap{store: make(map[string]string)}
+)
+
+
+// hashes name once and stores it in name map.
+// TODO move this to a separate module
 func hashName(name string) (string, string){
-	io.WriteString(h, name)
-	s := fmt.Sprintf("%x", h.Sum(nil)[0:3])
-	return s, technicolor.RandColorName()
+	hash, ok := nameMap.Get(name)
+	if ! ok {
+		io.WriteString(h, name)
+		v := fmt.Sprintf("%x", h.Sum(nil)[0:3])
+		nameMap.Set(name, v)
+		hash = v
+	}
+	return hash, technicolor.RandColorName()
 }
 
 
