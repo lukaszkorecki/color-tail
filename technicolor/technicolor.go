@@ -38,7 +38,16 @@ func Paint(str, color string) string {
 
 // Colorizes the string with randomly picked color
 func RandPaint(str string) string {
-	idx := rand.Int31n(ctLen)
+	idx := randIndex()
 	key := Colors[idx]
 	return Paint(str, key)
+}
+
+
+func RandColorName() string {
+	return Colors[randIndex()]
+}
+func randIndex() int {
+
+	return int(rand.Int31n(ctLen))
 }

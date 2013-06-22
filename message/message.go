@@ -15,25 +15,17 @@ type Message struct {
 
 var h = md5.New()
 
-func hashId(name string) int {
+func hashName(name string) (string, string){
 	io.WriteString(h, name)
-	return int(h.Sum(nil)[0])
-}
-
-func hashName(name string) string {
-	io.WriteString(h, name)
-	return fmt.Sprintf("%x", h.Sum(nil)[0:3])
+	s := fmt.Sprintf("%x", h.Sum(nil)[0:3])
+	return s, technicolor.RandColorName()
 }
 
 
 func (m Message) Print() {
-	hn := hashName(m.Name)
-	n := technicolor.RandPaint(hn)
-	fmt.Printf("%v:\n", technicolor.RandPaint(m.Name))
-
+	hn, color := hashName(m.Name)
 	for _, s := range strings.Split(m.Event, "\n") {
-		if len(s) > 0 {
-			fmt.Printf("%v: %v\n", n, s)
-		}
+		n := technicolor.Paint(hn, color)
+		fmt.Printf("%v: %v\n", n, s)
 	}
 }
