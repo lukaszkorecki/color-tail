@@ -17,8 +17,18 @@ var (
 		"reset":   "\033[39m",
 	}
 
-	Colors = []string{"black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"}
-	ctLen  = int32(len(Colors))
+	Colors = []string{
+		"black",
+		"red",
+		"green",
+		"yellow",
+		"blue",
+		"magenta",
+		"cyan",
+		"white",
+	}
+
+	ctLen = int32(len(Colors))
 )
 
 // Colorizes given string with specified color
@@ -42,7 +52,6 @@ func RandPaint(str string) string {
 	key := Colors[idx]
 	return Paint(str, key)
 }
-
 
 func RandColorName() string {
 	return Colors[randIndex()]
