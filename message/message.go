@@ -22,7 +22,7 @@ var (
 
 
 // hashes name once and stores it in name map.
-// which is suitable for consumption
+// so for /var/log/nginx/error.log it will return 5faabc4e
 func hashName(name string) string {
 	hash, ok := nameMap.Get(name)
 	if ! ok {
@@ -36,6 +36,7 @@ func hashName(name string) string {
 	return hash.(string)
 }
 
+// Pick a random color once and then store it for given file name
 func getColor(name string) string {
 	color, ok := colorMap.Get(name)
 	if ! ok {
@@ -45,13 +46,33 @@ func getColor(name string) string {
 	return color.(string)
 }
 
+func getPrefix(name string) string {
+	hn := hashName(name)
+	color := getColor(name)
+	prefix := technicolor.Paint(hn, color)
+	return prefix
+}
 
-func (m Message) Print() {
-	hn := hashName(m.Name)
-	color := getColor(m.Name)
+func formatEvent(prefix, event string) string {
+	lines := strings.Split(event, "\n")
 
-	for _, s := range strings.Split(m.Event, "\n") {
-		n := technicolor.Paint(hn, color)
-		fmt.Printf("%v: %v\n", n, s)
+	buf := make([]string, len(lines))
+
+	for _, line := range lines {
+		s := fmt.Sprintf("%v: %v", prefix, line)
+		fmt.Printf("%v -%v-", line, line)
+		if len(s) > 0 {
+			buf = append(buf, s)
+		}
 	}
+
+	return strings.Join(buf, "\n")
+}
+
+// Print a file message and color code the file name hash
+func (m Message) Print() {
+	prefix := getPrefix(m.Name)
+	str := formatEvent(prefix, m.Event)
+
+	fmt.Print(str)
 }
