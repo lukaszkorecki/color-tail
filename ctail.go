@@ -12,38 +12,54 @@ import (
 	"runtime"
 )
 
-// keeps a track of file size
+// keeps a track of file size...
+// XXX is it good to have it as a global?
 var sizeMap = registry.New()
+
+func setInitialSize(fname string) bool {
+	file, err := os.Open(fname)
+	defer file.Close()
+
+	size, statErr := getFileSize(file)
+
+	if err != nil || statErr != true {
+		return false // file can't be read...
+	}
+	sizeMap.Set(fname, size)
+
+	return true
+}
+
+func getFileSize(f *os.File) (int64, bool) {
+	stat, err := f.Stat()
+	if err != nil {
+		return 0, false
+	}
+
+	return int64(stat.Size()), true
+}
 
 // the meat of the programme
 // whenever an event of a file change is received we check it's previous
 // size (if we have it) and then extract the lines added and pack them
 // into a Message to print.
-// If size was not detected we print last 10 lines <- TODO FIXME that's a lie
 func fileChanged(fname string) message.Message {
 	file, err := os.Open(fname)
 	defer file.Close()
 
 	// get file size
-	stat, statErr := file.Stat()
-	size := int64(stat.Size())
+	size, statErr := getFileSize(file)
 
-	if err != nil || statErr != nil {
+	if err != nil || statErr != true {
 		return message.Message{fname, "Can't open file!"}
 	}
 
-	lastSize, isSet := sizeMap.Get(fname)
-
-	// assume we don't have size yet...
-	offset := int64(0)
-	if isSet {
-		// Type assert here - we know that if it's set, it's int
-		offset, _ = lastSize.(int64)
-	}
+	lastSize, _ := sizeMap.Get(fname)
+	offset, _ := lastSize.(int64)
 
 	// file got trimmed - or something reported wrong size
 	if offset >= size || offset <= 0 {
-		offset = size / 2
+		offset = int64(float64(size) / 0.25)
 	}
 
 	buf := make([]byte, offset)
@@ -92,10 +108,12 @@ func main() {
 
 	for i := 1; i < len(os.Args); i++ {
 		fname, _ := filepath.Abs(os.Args[i])
-		// XXX check if file is readable?
-		// read file size here and include it in sizeMap?
-		sizeMap.Set(fname, 0)
-		go monitorPath(fname, out)
+
+		if setInitialSize(fname) {
+			go monitorPath(fname, out)
+		} else {
+			log.Printf("!! File can't be read!: %v", fname)
+		}
 	}
 
 	for {
