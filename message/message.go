@@ -55,18 +55,18 @@ func getPrefix(name string) string {
 
 func formatEvent(prefix, event string) string {
 	lines := strings.Split(event, "\n")
+	length := len(lines)  // last element is \n
 
-	buf := make([]string, len(lines))
+	buf := make([]string, length)
 
-	for _, line := range lines {
-		s := fmt.Sprintf("%v: %v", prefix, line)
-		fmt.Printf("%v -%v-", line, line)
-		if len(s) > 0 {
+	for i, line := range lines {
+		s := fmt.Sprintf("%v: %v\n", prefix, line)
+		if i < length-1 {
 			buf = append(buf, s)
 		}
 	}
 
-	return strings.Join(buf, "\n")
+	return strings.Join(buf, "")
 }
 
 // Print a file message and color code the file name hash
