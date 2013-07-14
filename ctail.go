@@ -14,15 +14,26 @@ import (
 
 // keeps a track of file size...
 // XXX is it good to have it as a global?
-var sizeMap = registry.New()
+var (
+	sizeMap = registry.New()
+	version = "0.1.0"
+)
 
+// FIXME crate a separate package for file ops?
 func setInitialSize(fname string) bool {
 	file, err := os.Open(fname)
 	defer file.Close()
 
+	if err != nil {
+		log.Printf("!!! Can't open file: %v", fname)
+		return false
+	}
+
+
 	size, statErr := getFileSize(file)
 
-	if err != nil || statErr != true {
+	if !statErr {
+		log.Printf("!!! Can't file size!", fname)
 		return false // file can't be read...
 	}
 	sizeMap.Set(fname, size)
@@ -78,7 +89,9 @@ func fileChanged(fname string) message.Message {
 // main... event handler so to speak
 func monitorPath(fname string, notify chan message.Message) {
 	watcher, _ := fsnotify.NewWatcher()
-	notify <- message.Message{fname, fmt.Sprintf("Start! %v", fname)}
+	watcher.Watch(fname)
+
+	log.Printf("Monitoring %v", fname)
 
 	go func() {
 		for {
@@ -88,31 +101,37 @@ func monitorPath(fname string, notify chan message.Message) {
 			case err := <-watcher.Error:
 				notify <- message.Message{fname, fmt.Sprintf("Error: %v", err)}
 				watcher.Close()
-				// XXX FIXME remove file from watchers collection?
 			}
 		}
 	}()
-
-	watcher.Watch(fname)
 }
 
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	out := make(chan message.Message)
-
-	if len(os.Args) == 1 {
-		log.Fatal("Needs files!")
+	if len(os.Args) <= 1 || os.Args[1] == "-h" || os.Args[1] == "--help" {
+		fmt.Printf("ctail v.%v\nUsage: ctail <path to files>\n", version)
 		os.Exit(1)
 	}
 
-	for i := 1; i < len(os.Args); i++ {
-		fname, _ := filepath.Abs(os.Args[i])
+	out := make(chan message.Message)
 
-		if setInitialSize(fname) {
-			go monitorPath(fname, out)
-		} else {
-			log.Printf("!! File can't be read!: %v", fname)
+	for _, argPath := range os.Args[1:] {
+		paths, err := filepath.Glob(argPath)
+		if err != nil {
+			log.Fatalf("Invalid path! %v", argPath);
+			os.Exit(1)
+		}
+
+		for _, path := range paths {
+			fname, _ := filepath.Abs(path)
+
+			if setInitialSize(fname) {
+				go monitorPath(fname, out)
+			} else {
+				log.Printf("!! File can't be read!: %v", fname)
+				os.Exit(1)
+			}
 		}
 	}
 
