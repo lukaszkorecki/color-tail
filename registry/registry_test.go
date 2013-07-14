@@ -4,7 +4,6 @@ import (
 	"testing"
 )
 
-
 func TestReadAndWrite(t *testing.T) {
 	reg := New()
 
@@ -35,7 +34,7 @@ func TestAnyType(t *testing.T) {
 
 	v1, _ := reg.Get("foo")
 	v2, _ := reg2.Get("foo")
-	if v1 != 1  {
+	if v1 != 1 {
 		t.Error("Expected value to be 1")
 	}
 

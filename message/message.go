@@ -1,12 +1,12 @@
 package message
 
 import (
-	"../technicolor"
 	"../registry"
-	"fmt"
-	"strings"
-	"io"
+	"../technicolor"
 	"crypto/sha1"
+	"fmt"
+	"io"
+	"strings"
 )
 
 type Message struct {
@@ -15,17 +15,16 @@ type Message struct {
 }
 
 var (
-	h = sha1.New()
-	nameMap = registry.New()
+	h        = sha1.New()
+	nameMap  = registry.New()
 	colorMap = registry.New()
 )
-
 
 // hashes name once and stores it in name map.
 // so for /var/log/nginx/error.log it will return 5faabc4e
 func hashName(name string) string {
 	hash, ok := nameMap.Get(name)
-	if ! ok {
+	if !ok {
 		io.WriteString(h, name)
 		v := fmt.Sprintf("%x", h.Sum(nil)[0:3])
 		nameMap.Set(name, v)
@@ -39,7 +38,7 @@ func hashName(name string) string {
 // Pick a random color once and then store it for given file name
 func getColor(name string) string {
 	color, ok := colorMap.Get(name)
-	if ! ok {
+	if !ok {
 		color = technicolor.RandColorName()
 		colorMap.Set(name, color)
 	}
@@ -55,7 +54,7 @@ func getPrefix(name string) string {
 
 func formatEvent(prefix, event string) string {
 	lines := strings.Split(event, "\n")
-	length := len(lines)  // last element is \n
+	length := len(lines) // last element is \n
 
 	buf := make([]string, length)
 

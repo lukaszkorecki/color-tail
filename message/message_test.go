@@ -20,7 +20,7 @@ func TestColor(t *testing.T) {
 	c2 := getColor("lol")
 
 	if c != c2 {
-		t.Errorf("color strings are not the same oh dear %v %v", c ,c2)
+		t.Errorf("color strings are not the same oh dear %v %v", c, c2)
 	}
 
 }
