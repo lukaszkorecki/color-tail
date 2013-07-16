@@ -5,11 +5,11 @@ content to the file
 package filemonitor
 
 import (
-	"../registry"
-	"os"
 	"../message"
-	"log"
+	"../registry"
 	"io"
+	"log"
+	"os"
 )
 
 var (
@@ -25,7 +25,6 @@ func InitialSize(fname string) bool {
 		log.Printf("!!! Can't open file: %v", fname)
 		return false
 	}
-
 
 	size, statErr := getFileSize(file)
 
@@ -46,7 +45,6 @@ func getFileSize(f *os.File) (int64, bool) {
 
 	return int64(stat.Size()), true
 }
-
 
 func Changed(fname string) message.Message {
 	file, err := os.Open(fname)
