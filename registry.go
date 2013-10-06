@@ -1,4 +1,4 @@
-package registry
+package main
 
 import "sync"
 
@@ -30,6 +30,6 @@ func (r *Registry) Set(key string, val AnyValue) AnyValue {
 
 }
 
-func New() *Registry {
+func NewRegistry() *Registry {
 	return &Registry{store: make(map[string]AnyValue)}
 }

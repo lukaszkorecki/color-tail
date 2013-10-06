@@ -1,8 +1,6 @@
-package message
+package main
 
 import (
-	"../registry"
-	"../technicolor"
 	"crypto/sha1"
 	"fmt"
 	"io"
@@ -16,8 +14,8 @@ type Message struct {
 
 var (
 	h        = sha1.New()
-	nameMap  = registry.New()
-	colorMap = registry.New()
+	nameMap  = NewRegistry()
+	colorMap = NewRegistry()
 )
 
 // hashes name once and stores it in name map.
@@ -39,7 +37,7 @@ func hashName(name string) string {
 func getColor(name string) string {
 	color, ok := colorMap.Get(name)
 	if !ok {
-		color = technicolor.RandColorName()
+		color = RandColorName()
 		colorMap.Set(name, color)
 	}
 	return color.(string)
@@ -48,7 +46,7 @@ func getColor(name string) string {
 func getPrefix(name string) string {
 	hn := hashName(name)
 	color := getColor(name)
-	prefix := technicolor.Paint(hn, color)
+	prefix := Paint(hn, color)
 	return prefix
 }
 

@@ -1,22 +1,20 @@
 /*
-This package does everything related to reading file size and reading newly added
+This package main
 content to the file
 */
-package filemonitor
+package main
 
 import (
-	"../message"
-	"../registry"
 	"io"
 	"log"
 	"os"
 )
 
 var (
-	sizeMap = registry.New()
+	sizeMap = NewRegistry()
 )
 
-// FIXME crate a separate package for file ops?
+// FIXME crate a separate package main
 func InitialSize(fname string) bool {
 	file, err := os.Open(fname)
 	defer file.Close()
@@ -46,7 +44,7 @@ func getFileSize(f *os.File) (int64, bool) {
 	return int64(stat.Size()), true
 }
 
-func Changed(fname string) message.Message {
+func Changed(fname string) Message {
 	file, err := os.Open(fname)
 	defer file.Close()
 
@@ -54,7 +52,7 @@ func Changed(fname string) message.Message {
 	size, statErr := getFileSize(file)
 
 	if err != nil || statErr != true {
-		return message.Message{fname, "Can't open file!"}
+		return Message{fname, "Can't open file!"}
 	}
 
 	lastSize, _ := sizeMap.Get(fname)
@@ -75,6 +73,6 @@ func Changed(fname string) message.Message {
 
 	// update file's size in the registry
 	sizeMap.Set(fname, int64(size))
-	return message.Message{fname, string(buf)}
+	return Message{fname, string(buf)}
 
 }

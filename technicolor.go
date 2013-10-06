@@ -1,4 +1,4 @@
-package technicolor
+package main
 
 import (
 	"math/rand"

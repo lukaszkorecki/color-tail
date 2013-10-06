@@ -1,8 +1,6 @@
 package main
 
 import (
-	"./filemonitor"
-	"./message"
 	"fmt"
 	"github.com/howeyc/fsnotify"
 	"log"
@@ -18,7 +16,7 @@ var (
 )
 
 // main... event handler so to speak
-func monitorPath(fname string, notify chan message.Message) {
+func monitorPath(fname string, notify chan Message) {
 	watcher, _ := fsnotify.NewWatcher()
 	watcher.Watch(fname)
 
@@ -28,9 +26,9 @@ func monitorPath(fname string, notify chan message.Message) {
 		for {
 			select {
 			case event := <-watcher.Event:
-				notify <- filemonitor.Changed(event.Name)
+				notify <- Changed(event.Name)
 			case err := <-watcher.Error:
-				notify <- message.Message{fname, fmt.Sprintf("Error: %v", err)}
+				notify <- Message{fname, fmt.Sprintf("Error: %v", err)}
 				watcher.Close()
 			}
 		}
@@ -63,10 +61,10 @@ func main() {
 	}
 
 	cnt := 0
-	out := make(chan message.Message)
+	out := make(chan Message)
 
 	for _, fname := range filePaths {
-		if filemonitor.InitialSize(fname) {
+		if InitialSize(fname) {
 			go monitorPath(fname, out)
 			cnt += 1
 		} else {
