@@ -9,10 +9,8 @@ import (
 	"runtime"
 )
 
-// keeps a track of file size...
-// XXX is it good to have it as a global?
 var (
-	version = "0.1.0"
+	version = "0.1.0a" // TODO read this from VERSION when compiling?
 )
 
 // main... event handler so to speak
