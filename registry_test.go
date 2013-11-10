@@ -5,7 +5,7 @@ import (
 )
 
 func TestReadAndWrite(t *testing.T) {
-	reg := New()
+	reg := NewRegistry()
 
 	reg.Set("foo", 1)
 
@@ -16,7 +16,7 @@ func TestReadAndWrite(t *testing.T) {
 }
 
 func TestGetStatus(t *testing.T) {
-	reg := New()
+	reg := NewRegistry()
 
 	_, status := reg.Get("foo")
 
@@ -26,10 +26,10 @@ func TestGetStatus(t *testing.T) {
 }
 
 func TestAnyType(t *testing.T) {
-	reg := New()
+	reg := NewRegistry()
 	reg.Set("foo", 1)
 
-	reg2 := New()
+	reg2 := NewRegistry()
 	reg2.Set("foo", "bar")
 
 	v1, _ := reg.Get("foo")
