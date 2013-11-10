@@ -1,4 +1,5 @@
 GOPATH=`pwd`
+VERSION=v`cat VERSION`
 main = ctail.go
 # find all package names in src and add them to list
 test_packages=`find -type d | egrep -v "src|.git|.pkg"`
@@ -20,3 +21,8 @@ dependencies:
 
 edit:
 	@env GOPATH=$(GOPATH) vim .
+
+release:
+	git tag $(VERSION)
+	git commit -m "Release: $(VERSION)
+	@echo $(VERSION) is ready to push
