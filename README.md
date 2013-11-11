@@ -22,3 +22,6 @@ current version
 ===============
 
 `0.1.0a` (alpha)
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/lukaszkorecki/color-tail/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
