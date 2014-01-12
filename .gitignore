@@ -33,3 +33,4 @@ ctail
 */*.txt
 *.txt
 tags
+color-tail

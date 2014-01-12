@@ -1,7 +1,3 @@
-/*
-This package main
-content to the file
-*/
 package main
 
 import (

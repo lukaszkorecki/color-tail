@@ -1,14 +1,14 @@
 GOPATH=`pwd`
 VERSION := "v`cat VERSION`"
-main = ctail.go
+main = main.go
 # find all package names in src and add them to list
-test_packages=`find -type d | egrep -v "src|.git|.pkg"`
+test_packages :=`find -type d | egrep -v "src|.git|.pkg"`
 
 all: dependencies test build
 
 build:
 	@echo Building in $(GOPATH)
-	@env GOPATH=$(GOPATH) go build -v $(main)
+	@env GOPATH=$(GOPATH) go build
 
 test:
 	@echo Testing!

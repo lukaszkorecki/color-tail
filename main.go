@@ -36,8 +36,12 @@ func monitorPath(fname string, notify chan Message) {
 func main() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
+	// TODO FIXME use something sane for option parsing
 	if len(os.Args) <= 1 || os.Args[1] == "-h" || os.Args[1] == "--help" {
-		fmt.Printf("ctail v.%v\nUsage: ctail <path to files>\n", version)
+		name := os.Args[0]
+		fmt.Printf(`
+		%s v.%v\nUsage: %s <path to files>\n
+		`, name, version, name)
 		os.Exit(1)
 	}
 
@@ -58,27 +62,26 @@ func main() {
 		}
 	}
 
-	cnt := 0
+	successCount := 0
 	out := make(chan Message)
 
 	for _, fname := range filePaths {
 		if InitialSize(fname) {
 			go monitorPath(fname, out)
-			cnt += 1
+			successCount += 1
 		} else {
-			cnt -= 1
+			successCount -= 1
 			log.Printf("!! File can't be read!: %v", fname)
 		}
 	}
 
-	if cnt > 0 {
+	if successCount > 0 {
 		for {
 			message := <-out
 			message.Print()
 		}
 	} else {
 		log.Print("No files to monitor!")
-
 		os.Exit(1)
 	}
 }
