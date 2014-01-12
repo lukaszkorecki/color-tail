@@ -8,7 +8,7 @@ all: dependencies test build
 
 build:
 	@echo Building in $(GOPATH)
-	@env GOPATH=$(GOPATH) go build -ldflags "-X main.version $(VERSION)"
+	go build -ldflags "-X main.version $(VERSION)"
 
 test:
 	@echo Testing!

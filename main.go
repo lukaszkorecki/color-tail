@@ -7,8 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	fm "./filemonitor"
-	m "./message"
+	fm "github.com/lukaszkorecki/color-tail/filemonitor"
+	m "github.com/lukaszkorecki/color-tail/message"
 )
 
 var (

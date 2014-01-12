@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"io"
 	"strings"
-	t "../technicolor"
-	r "../registry"
+	t "github.com/lukaszkorecki/color-tail/technicolor"
+	r "github.com/lukaszkorecki/color-tail/registry"
 )
 
 type Message struct {

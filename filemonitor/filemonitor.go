@@ -4,8 +4,8 @@ import (
 	"io"
 	"log"
 	"os"
-	r "../registry"
-	m "../message"
+	r "github.com/lukaszkorecki/color-tail/registry"
+	m "github.com/lukaszkorecki/color-tail/message"
 )
 
 var (
