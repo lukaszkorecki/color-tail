@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	fm "./filemonitor"
+	m "./message"
 )
 
 var (
@@ -14,7 +16,7 @@ var (
 )
 
 // main... event handler so to speak
-func monitorPath(fname string, notify chan Message) {
+func monitorPath(fname string, notify chan m.Message) {
 	watcher, _ := fsnotify.NewWatcher()
 	watcher.Watch(fname)
 
@@ -24,9 +26,9 @@ func monitorPath(fname string, notify chan Message) {
 		for {
 			select {
 			case event := <-watcher.Event:
-				notify <- Changed(event.Name)
+				notify <- fm.Changed(event.Name)
 			case err := <-watcher.Error:
-				notify <- Message{fname, fmt.Sprintf("Error: %v", err)}
+				notify <- m.Message{fname, fmt.Sprintf("Error: %v", err)}
 				watcher.Close()
 			}
 		}
@@ -39,9 +41,10 @@ func main() {
 	// TODO FIXME use something sane for option parsing
 	if len(os.Args) <= 1 || os.Args[1] == "-h" || os.Args[1] == "--help" {
 		name := os.Args[0]
-		fmt.Printf(`
-		%s v.%v\nUsage: %s <path to files>\n
-		`, name, version, name)
+		fmt.Printf(`%s v.%v
+
+Usage: %s <path to files>
+`, name, version, name)
 		os.Exit(1)
 	}
 
@@ -63,10 +66,10 @@ func main() {
 	}
 
 	successCount := 0
-	out := make(chan Message)
+	out := make(chan m.Message)
 
 	for _, fname := range filePaths {
-		if InitialSize(fname) {
+		if fm.InitialSize(fname) {
 			go monitorPath(fname, out)
 			successCount += 1
 		} else {

@@ -1,13 +1,15 @@
-package main
+package filemonitor
 
 import (
 	"io"
 	"log"
 	"os"
+	r "../registry"
+	m "../message"
 )
 
 var (
-	sizeMap = NewRegistry()
+	sizeMap = r.NewRegistry()
 )
 
 // FIXME crate a separate package main
@@ -40,7 +42,7 @@ func getFileSize(f *os.File) (int64, bool) {
 	return int64(stat.Size()), true
 }
 
-func Changed(fname string) Message {
+func Changed(fname string) m.Message {
 	file, err := os.Open(fname)
 	defer file.Close()
 
@@ -48,7 +50,7 @@ func Changed(fname string) Message {
 	size, statErr := getFileSize(file)
 
 	if err != nil || statErr != true {
-		return Message{fname, "Can't open file!"}
+		return m.Message{fname, "Can't open file!"}
 	}
 
 	lastSize, _ := sizeMap.Get(fname)
@@ -69,6 +71,6 @@ func Changed(fname string) Message {
 
 	// update file's size in the registry
 	sizeMap.Set(fname, int64(size))
-	return Message{fname, string(buf)}
+	return m.Message{fname, string(buf)}
 
 }
