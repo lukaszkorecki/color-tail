@@ -3,10 +3,10 @@ package message
 import (
 	"crypto/sha1"
 	"fmt"
+	r "github.com/lukaszkorecki/color-tail/registry"
+	t "github.com/lukaszkorecki/color-tail/technicolor"
 	"io"
 	"strings"
-	t "github.com/lukaszkorecki/color-tail/technicolor"
-	r "github.com/lukaszkorecki/color-tail/registry"
 )
 
 type Message struct {
@@ -16,8 +16,8 @@ type Message struct {
 
 var (
 	h        = sha1.New()
-	nameMap  = r.NewRegistry()
-	colorMap = r.NewRegistry()
+	nameMap  = r.New()
+	colorMap = r.New()
 )
 
 // hashes name once and stores it in name map.

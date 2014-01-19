@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 	"github.com/howeyc/fsnotify"
+	fm "github.com/lukaszkorecki/color-tail/filemonitor"
+	m "github.com/lukaszkorecki/color-tail/message"
 	"log"
 	"os"
 	"path/filepath"
 	"runtime"
-	fm "github.com/lukaszkorecki/color-tail/filemonitor"
-	m "github.com/lukaszkorecki/color-tail/message"
 )
 
 var (

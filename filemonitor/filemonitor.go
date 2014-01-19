@@ -1,15 +1,15 @@
 package filemonitor
 
 import (
+	m "github.com/lukaszkorecki/color-tail/message"
+	r "github.com/lukaszkorecki/color-tail/registry"
 	"io"
 	"log"
 	"os"
-	r "github.com/lukaszkorecki/color-tail/registry"
-	m "github.com/lukaszkorecki/color-tail/message"
 )
 
 var (
-	sizeMap = r.NewRegistry()
+	sizeMap = r.New()
 )
 
 func InitialSize(fname string) bool {

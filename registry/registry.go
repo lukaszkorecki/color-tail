@@ -30,6 +30,6 @@ func (r *Registry) Set(key string, val AnyValue) AnyValue {
 
 }
 
-func NewRegistry() *Registry {
+func New() *Registry {
 	return &Registry{store: make(map[string]AnyValue)}
 }
