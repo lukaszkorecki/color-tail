@@ -1,5 +1,4 @@
-GOPATH=`pwd`
-VERSION := "v`cat VERSION`"
+VERSION := "v"`cat VERSION`
 main = main.go
 # find all package names in src and add them to list
 test_packages :=`find -type d | egrep -v "src|.git|.pkg"`
