@@ -1,7 +1,7 @@
 color-tail [![Build Status](https://travis-ci.org/lukaszkorecki/color-tail.png?branch=master)](https://travis-ci.org/lukaszkorecki/color-tail)
 ==========
 
-Like tail -f but with colors tags for each file
+Like `tail -f` but with color tags for each file.
 
 
 usage
@@ -15,7 +15,7 @@ usage
 installation
 ============
 
-`go install https://github.com/lukaszkorecki/color-tail/`
+`go install https://github.com/lukaszkorecki/color-tail`
 
 
 current version
