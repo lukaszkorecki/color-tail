@@ -12,7 +12,6 @@ var (
 	sizeMap = r.NewRegistry()
 )
 
-// FIXME crate a separate package main
 func InitialSize(fname string) bool {
 	file, err := os.Open(fname)
 	defer file.Close()

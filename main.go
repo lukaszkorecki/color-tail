@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	version = "0.1.0a" // TODO read this from VERSION when compiling?
+	version = "" // Version string is inject during build
 )
 
 // main... event handler so to speak
@@ -65,20 +65,20 @@ Usage: %s <path to files>
 		}
 	}
 
-	successCount := 0
+	fileCounter := 0
 	out := make(chan m.Message)
 
 	for _, fname := range filePaths {
 		if fm.InitialSize(fname) {
 			go monitorPath(fname, out)
-			successCount += 1
+			fileCounter += 1
 		} else {
-			successCount -= 1
+			fileCounter -= 1
 			log.Printf("!! File can't be read!: %v", fname)
 		}
 	}
 
-	if successCount > 0 {
+	if fileCounter > 0 {
 		for {
 			message := <-out
 			message.Print()
