@@ -1,4 +1,4 @@
-VERSION := "v"`cat VERSION`
+VERSION := "v"`head -1 VERSION`
 main = main.go
 # find all package names in src and add them to list
 test_packages :=`find -type d | egrep -v "src|.git|.pkg"`
