@@ -9,7 +9,7 @@ func TestRedPaint(t *testing.T) {
 
 	s := "test"
 	exp := "\033[31mtest\033[39m"
-	ns := Paint(s, "red")
+	ns := Paint(s, "Red")
 
 	if ns != exp {
 		t.Errorf("expected %v to equal %v", ns, exp)
