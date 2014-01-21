@@ -69,9 +69,7 @@ func formatEvent(prefix, event string) string {
 }
 
 // Print a file message and color code the file name hash
-func (m Message) Print() {
+func (m Message) Formatted() string {
 	prefix := getPrefix(m.Name)
-	str := formatEvent(prefix, m.Event)
-
-	fmt.Print(str)
+	return formatEvent(prefix, m.Event)
 }

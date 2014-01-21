@@ -17,10 +17,12 @@ var (
 
 // main... event handler so to speak
 func monitorPath(fname string, notify chan m.Message) {
+	sm := m.Message{fname, fmt.Sprintf("-> Monitoring %s!\n", fname)}
+	fmt.Print(sm.Formatted())
+
 	watcher, _ := fsnotify.NewWatcher()
 	watcher.Watch(fname)
 
-	log.Printf("Monitoring %v", fname)
 
 	go func() {
 		for {
@@ -81,7 +83,7 @@ Usage: %s <path to files>
 	if fileCounter > 0 {
 		for {
 			message := <-out
-			message.Print()
+			fmt.Print(message.Formatted())
 		}
 	} else {
 		log.Print("No files to monitor!")
