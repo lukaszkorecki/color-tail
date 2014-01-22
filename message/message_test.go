@@ -1,8 +1,8 @@
 package message
 
 import (
-	"testing"
 	"fmt"
+	"testing"
 )
 
 var msg = Message{"woo", "test\n"}

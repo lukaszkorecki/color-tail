@@ -23,7 +23,6 @@ func monitorPath(fname string, notify chan m.Message) {
 	watcher, _ := fsnotify.NewWatcher()
 	watcher.Watch(fname)
 
-
 	go func() {
 		for {
 			select {
